@@ -1,0 +1,15 @@
+node_modules/
+
+dist/
+
+build/
+.cache/
+
+.env
+.env.*
+
+.vscode
+.idea
+
+npm-debug.log*
+yarn-error.log*
