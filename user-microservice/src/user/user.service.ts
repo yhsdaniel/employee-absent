@@ -12,14 +12,16 @@ export class UserService {
         private jwtService: JwtService,
     ) { }
 
-    async register(email: string, password_plain: string, name: string, role: string): Promise<UserDocument | { code: number, message: string }> {
+    async register(email: string, password_plain: string, name: string, phone: string, position: string, role: string): Promise<UserDocument | { code: number, message: string }> {
         try {
             const hashedPassword = await bcrypt.hash(password_plain, 10);
             const newUser = new this.userModel({
                 email,
                 password: hashedPassword,
                 role,
-                name
+                name,
+                phone,
+                position
             });
             return newUser.save();
         } catch (error) {
@@ -44,6 +46,7 @@ export class UserService {
                 email: user.email,
                 sub: user._id,
                 name: user.name,
+                phone: user.phone,
                 role: user.role
             };
             return {
@@ -64,10 +67,7 @@ export class UserService {
 
     async verifyToken(token: string): Promise<any | null> {
         try {
-            // jwtService.verify() akan melemparkan exception jika token tidak valid atau kadaluarsa
             const payload = this.jwtService.verify(token);
-
-            // Mengembalikan payload yang berisi sub (userId), email, dan role
             return payload;
         } catch (error) {
             console.error('Token verification failed:', error.message);
@@ -80,17 +80,19 @@ export class UserService {
             email: user.email,
             sub: user._id,
             name: user.name,
+            phone: user.phone,
             role: user.role
         };
         return this.jwtService.sign(payload);
     }
 
-    async updateProfile(userId: string, updateData: { email?: string, name?: string, password?: string }): Promise<UserDocument | null> {
+    async updateProfile(userId: string, updateData: { email?: string, name?: string, password?: string, phone?: number }): Promise<UserDocument | null> {
         try {
             const updateField: any = {}
             if(updateData.password){
                 const hashedPassword = await bcrypt.hash(updateData.password, 10);
                 updateField.password = hashedPassword
+                updateField.phone
             }
             return this.userModel.findByIdAndUpdate(
                 userId,

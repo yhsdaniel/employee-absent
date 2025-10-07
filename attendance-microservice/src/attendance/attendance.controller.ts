@@ -1,40 +1,58 @@
-import { Controller } from '@nestjs/common';
-import { MessagePattern } from '@nestjs/microservices';
+import { Controller, Post, Get, Body, Query, HttpException, HttpStatus } from '@nestjs/common';
 import { AttendanceService } from './attendance.service';
 
-@Controller()
+@Controller('attendance')
 export class AttendanceController {
-    constructor(private readonly attendanceService: AttendanceService) { }
+    constructor(private readonly attendanceService: AttendanceService) {}
 
-    @MessagePattern({ cmd: 'check_in' })
-    async checkIn(data: { userId: string, name: string }) {
-        return this.attendanceService.recordAttendance(data.userId, data.name, 'IN');
+    @Post('checkin')
+    async checkIn(@Body() body: { userId: string; name: string }) {
+        try {
+            return await this.attendanceService.recordAttendance(body.userId, body.name, 'IN');
+        } catch (error: any) {
+            throw new HttpException(error.message || 'Check-in gagal', HttpStatus.BAD_REQUEST);
+        }
     }
 
-    @MessagePattern({ cmd: 'check_out' })
-    async checkOut(data: { userId: string, name: string }) {
-        return this.attendanceService.recordAttendance(data.userId, data.name, 'OUT');
+    @Post('checkout')
+    async checkOut(@Body() body: { userId: string; name: string }) {
+        try {
+            return await this.attendanceService.recordAttendance(body.userId, body.name, 'OUT');
+        } catch (error: any) {
+            throw new HttpException(error.message || 'Check-out gagal', HttpStatus.BAD_REQUEST);
+        }
     }
 
-    @MessagePattern({ cmd: 'get_today_status' })
-    async getTodayStatus(data: { userId: string }) {
-        return this.attendanceService.getTodayStatus(data.userId);
+    @Get('status')
+    async getTodayStatus(@Query('userId') userId: string) {
+        if (!userId) throw new HttpException('userId wajib diisi', HttpStatus.BAD_REQUEST);
+        return this.attendanceService.getTodayStatus(userId);
     }
 
-    @MessagePattern({ cmd: 'get_monthly_records' })
-    async getMonthlyRecords(data: { userId: string }) {
-        return this.attendanceService.getMonthlyRecords(data.userId);
+    @Get('records/monthly')
+    async getMonthlyRecords(@Query('userId') userId: string) {
+        if (!userId) throw new HttpException('userId wajib diisi', HttpStatus.BAD_REQUEST);
+        return this.attendanceService.getMonthlyRecords(userId);
     }
 
-    @MessagePattern({ cmd: 'get_all_records_by_date' })
-    async getAllRecordsByDate(data: { startDate: string; endDate: string, nameQuery: string }) {
-        return this.attendanceService.getAllRecordsByDate(data.startDate, data.endDate, data.nameQuery);
+    @Get('hr/records')
+    async getAllRecordsByDate(
+        @Query('startDate') startDate: string,
+        @Query('endDate') endDate: string,
+        @Query('nameQuery') nameQuery?: string,
+    ) {
+        if (!startDate || !endDate) {
+            throw new HttpException('Filter tanggal wajib diisi.', HttpStatus.BAD_REQUEST);
+        }
+        if(nameQuery){
+            return this.attendanceService.getAllRecordsByDate(startDate, endDate, nameQuery);
+        }
     }
 
-    @MessagePattern({ cmd: 'get_all_attendance_records' })
-    async getAllRecords(data: { role: string }) {
-        if (data.role !== 'HR') {
-            return { error: 'Access denied' };
+    @Get('records')
+    async getAllRecords(@Query('role') role: string) {
+        if (role !== 'HR') {
+            throw new HttpException('Akses ditolak. Hanya untuk HR.', HttpStatus.FORBIDDEN);
         }
         return this.attendanceService.findAllRecords();
     }

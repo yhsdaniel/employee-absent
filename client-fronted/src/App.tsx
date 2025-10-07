@@ -1,10 +1,11 @@
 import './App.css'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
-import LoginPage from './pages/Auth/LoginPage'
+import LoginPage from './pages/LoginPage'
 import DashboardPage from './pages/DashboardPage'
 import EmployeeRecordPage from './pages/EmployeeRecordPage'
 import ProfilePage from './pages/ProfilePage'
 import { Toaster } from 'react-hot-toast'
+import RegisterEmployeePage from './pages/RegisterEmployeePage'
 
 function App() {
   return (
@@ -14,7 +15,8 @@ function App() {
           <Route path='/' element={<LoginPage />} />
           <Route path='/dashboard' element={<DashboardPage />} />
           <Route path='/profile' element={<ProfilePage />}/>
-          <Route path='/hr/employees' element={<EmployeeRecordPage />}/>
+          <Route path='/hr/record-employees' element={<EmployeeRecordPage />}/>
+          <Route path='/hr/register-employees' element={<RegisterEmployeePage />}/>
         </Routes>
       </Router>
       <Toaster position='top-center'/>

@@ -1,45 +1,71 @@
-import { Controller } from '@nestjs/common';
+import { Body, Controller, HttpException, HttpStatus, Param, Patch, Post } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
 import { UserService } from './user.service';
 
-@Controller()
+@Controller('auth')
 export class UserController {
     constructor(private readonly userService: UserService) { }
 
-    @MessagePattern({ cmd: 'register_employee' })
-    async register(data: any) {
-        return this.userService.register(data.email, data.password, data.name, data.role);
+    @Post('register')
+    async register(@Body() body: any) {
+        try {
+            const user = await this.userService.register(
+                body.email,
+                body.password,
+                body.name,
+                body.phone,
+                body.position,
+                body.role,
+            );
+            console.log(user)
+            return { message: 'Registrasi berhasil!', user };
+        } catch (error: any) {
+            if (error.code === 11000) {
+                throw new HttpException('Email sudah terdaftar.', HttpStatus.CONFLICT);
+            }
+            throw new HttpException(
+                error.message || 'Gagal registrasi.',
+                HttpStatus.INTERNAL_SERVER_ERROR,
+            );
+        }
     }
 
-    @MessagePattern({ cmd: 'login' })
-    async login(data: any) {
-        const user = await this.userService.validateUser(data.email, data.password);
-        if (!user) return { error: 'Invalid credentials' };
+    @Post('login')
+    async login(@Body() body: any) {
+        const user = await this.userService.validateUser(body.email, body.password);
+        if (!user) {
+            throw new HttpException('Email atau kata sandi salah.', HttpStatus.UNAUTHORIZED);
+        }
 
         const token = await this.userService.generateToken(user);
         return { accessToken: token };
     }
 
-    @MessagePattern({ cmd: 'validate_token' })
-    async validateToken(data: { token: string }) {
-        if (!data.token) {
-            return { error: 'Token is missing' };
+    @Post('validate-token')
+    async validateToken(@Body() body: { token: string }) {
+        if (!body.token) {
+            throw new HttpException('Token tidak boleh kosong.', HttpStatus.BAD_REQUEST);
         }
 
-        // Panggil fungsi service untuk memverifikasi token
-        const payload = await this.userService.verifyToken(data.token);
-
+        const payload = await this.userService.verifyToken(body.token);
         if (!payload) {
-            // Mengembalikan objek error yang akan ditangani oleh JwtAuthGuard di Gateway
-            return { error: 'Invalid or expired token' };
+            throw new HttpException('Token tidak valid atau sudah kedaluwarsa.', HttpStatus.UNAUTHORIZED);
         }
 
-        // Mengembalikan payload yang berisi { sub, email, role }
         return payload;
     }
 
-    @MessagePattern({ cmd: 'update_profile' })
-    async updateProfile(data: { userId: string, name: string, email: string, password: string }) {
-        return this.userService.updateProfile(data.userId, data);
+
+    @Patch('profile/:id')
+    async updateProfile(@Param('id') userId: string, @Body() body: any) {
+        try {
+            const updatedUser = await this.userService.updateProfile(userId, body);
+            return { message: 'Profil berhasil diperbarui.', user: updatedUser };
+        } catch (error: any) {
+            throw new HttpException(
+                error.message || 'Gagal memperbarui profil.',
+                HttpStatus.INTERNAL_SERVER_ERROR,
+            );
+        }
     }
 }

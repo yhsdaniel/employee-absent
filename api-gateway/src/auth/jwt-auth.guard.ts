@@ -1,10 +1,12 @@
+import { HttpService } from '@nestjs/axios';
 import { CanActivate, ExecutionContext, Injectable, Inject, UnauthorizedException } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
-  constructor(@Inject('USER_SERVICE') private readonly userClient: ClientProxy) { }
+  // constructor(@Inject('USER_SERVICE') private readonly userClient: ClientProxy) { }
+  constructor(private readonly httpService: HttpService) { }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
@@ -20,15 +22,17 @@ export class JwtAuthGuard implements CanActivate {
       throw new UnauthorizedException('Invalid token format');
     }
 
-    const userPayload = await firstValueFrom(
-      this.userClient.send({ cmd: 'validate_token' }, { token })
-    );
+    try {
+      const response = await firstValueFrom(
+        this.httpService.post(`${process.env.USER_SERVICE_URL}/auth/validate-token`, { token })
+      );
 
-    if (!userPayload || userPayload.error) {
+      const userPayload = response.data;
+
+      request.user = userPayload;
+      return true;
+    } catch (error: any) {
       throw new UnauthorizedException('Invalid or expired token');
     }
-
-    request.user = userPayload;
-    return true;
   }
 }

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useAuth } from '@/context/AuthContext';
+import { useState, useEffect } from 'react';
+// import { useAuth } from '@/context/AuthContext';
 import Layout from '@/components/Layout';
 import { Button } from '@/components/ui/button';
 import { api } from '@/api/auth';
@@ -14,7 +14,7 @@ interface AttendanceRecord {
 }
 
 export default function DashboardPage() {
-    const { user } = useAuth();
+    // const { user } = useAuth();
     const [status, setStatus] = useState<'IN' | 'OUT' | null>(null);
     const [message, setMessage] = useState('');
     const [isLoading, setIsLoading] = useState(true);

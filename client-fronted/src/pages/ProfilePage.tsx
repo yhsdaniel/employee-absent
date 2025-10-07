@@ -5,18 +5,30 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { updateProfile } from '@/api/auth'; // Endpoint API
+import { updateProfile } from '@/api/auth';
 
 export default function ProfilePage() {
-    const { user, login } = useAuth(); // Ambil user saat ini dan fungsi login untuk update state
+    const { user, login } = useAuth();
 
-    // Asumsi user memiliki properti: email, name (jika ada di payload login)
-    const [name, setName] = useState(user?.name || '');
-    const [email, setEmail] = useState(user?.email || '');
-    const [newPassword, setNewPassword] = useState('');
+    const [formData, setFormData] = useState({
+        name: user?.name || '',
+        email: user?.email || '',
+        newPassword: '',
+        newphone: user?.phone || '',
+    })
     const [message, setMessage] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const token = localStorage.getItem('token'); // Ambil token untuk permintaan terautentikasi
+    const token = localStorage.getItem('token');
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const { name, value } = e.target;
+
+        setFormData({
+            ...formData,
+            [name]: name === 'newphone' ? Number(value) : value,
+
+        });
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -30,10 +42,11 @@ export default function ProfilePage() {
         }
 
         const updateData: any = {};
-        if (newPassword) updateData.password = newPassword;
+        if (formData.newPassword) updateData.password = formData.newPassword;
+        if (formData.newphone) updateData.phone = formData.newphone;
 
         if (Object.keys(updateData).length === 0) {
-            setMessage('Tidak ada perubahan yang terdeteksi.');
+            setMessage('Tidak ada perubahan.');
             setIsSubmitting(false);
             return;
         }
@@ -45,7 +58,12 @@ export default function ProfilePage() {
             if (response.user) {
                 login(token, { ...user, ...response.user });
             }
-            setNewPassword('');
+            setFormData({
+                name: '',
+                email: '',
+                newPassword: '',
+                newphone: ''
+            });
 
         } catch (error: any) {
             console.error('Update Profile Error:', error);
@@ -72,10 +90,11 @@ export default function ProfilePage() {
                                 <Input
                                     id="name"
                                     type="text"
+                                    name='name'
                                     placeholder="Masukkan nama Anda"
-                                    value={name}
+                                    value={formData.name}
                                     disabled
-                                    onChange={(e) => setName(e.target.value)}
+                                    onChange={handleChange}
                                     required
                                     className='bg-gray-300 cursor-not-allowed'
                                 />
@@ -86,12 +105,24 @@ export default function ProfilePage() {
                                 <Input
                                     id="email"
                                     type="email"
+                                    name='email'
                                     placeholder="Masukkan email baru"
-                                    value={email}
+                                    value={formData.email}
                                     disabled
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    required
+                                    onChange={handleChange}
                                     className='bg-gray-300 cursor-not-allowed'
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="phone">Nomor Kontak Baru</Label>
+                                <Input
+                                    id="phone"
+                                    type="number"
+                                    name='phone'
+                                    placeholder="Masukan nomor kontak baru"
+                                    value={formData.newphone}
+                                    onChange={handleChange}
                                 />
                             </div>
 
@@ -100,9 +131,10 @@ export default function ProfilePage() {
                                 <Input
                                     id="password"
                                     type="password"
+                                    name='password'
                                     placeholder="Kosongkan jika tidak ingin mengubah password"
-                                    value={newPassword}
-                                    onChange={(e) => setNewPassword(e.target.value)}
+                                    value={formData.newPassword}
+                                    onChange={handleChange}
                                 />
                             </div>
 

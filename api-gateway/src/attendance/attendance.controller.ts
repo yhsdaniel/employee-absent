@@ -2,46 +2,43 @@ import { Controller, Post, Get, Inject, UseGuards, Request, Body, HttpException,
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { HttpService } from '@nestjs/axios';
+
+const ATTENDANCE_SERVICE = process.env.ATTENDANCE_SERVICE_URL || 'http://localhost:3002'
 
 @Controller('attendance')
 export class AttendanceController {
-    constructor(@Inject('ATTENDANCE_SERVICE') private readonly attendanceClient: ClientProxy) { }
+    // constructor(@Inject('ATTENDANCE_SERVICE') private readonly attendanceClient: ClientProxy) { }
+    constructor(private readonly httpService: HttpService) { }
 
     @UseGuards(JwtAuthGuard)
     @Post('checkin')
     async checkIn(@Request() req: any) {
-        const { sub: userId, name: name } = req.user;
+        const { sub: userId, name } = req.user;
 
-        const result = await firstValueFrom(
-            this.attendanceClient.send({ cmd: 'check_in' }, { userId, name })
-        );
-
-        if (result && result.error) {
-            throw new HttpException(result.error, HttpStatus.BAD_REQUEST);
+        try {
+            const response = await firstValueFrom(
+                this.httpService.post(`${ATTENDANCE_SERVICE}/attendance/checkin`, { userId, name })
+            );
+            return { message: 'Check-in berhasil', record: response.data };
+        } catch (error: any) {
+            throw new HttpException(error.response?.data?.message || 'Gagal check-in', error.response?.status || HttpStatus.BAD_REQUEST);
         }
-
-        return {
-            message: 'Check-in berhasil',
-            record: result
-        };
     }
 
     @UseGuards(JwtAuthGuard)
     @Post('checkout')
     async checkOut(@Request() req: any) {
-        const { sub: userId, name: name } = req.user;
+        const { sub: userId, name } = req.user;
 
-        const result = await firstValueFrom(
-            this.attendanceClient.send({ cmd: 'check_out' }, { userId, name })
-        );
-
-        if (result && result.error) {
-            throw new HttpException(result.error, HttpStatus.BAD_REQUEST);
+        try {
+            const response = await firstValueFrom(
+                this.httpService.post(`${ATTENDANCE_SERVICE}/attendance/checkout`, { userId, name })
+            );
+            return { message: 'Check-out berhasil', record: response.data };
+        } catch (error: any) {
+            throw new HttpException(error.response?.data?.message || 'Gagal check-out', error.response?.status || HttpStatus.BAD_REQUEST);
         }
-        return {
-            message: 'Check-out berhasil',
-            record: result
-        };
     }
 
     @UseGuards(JwtAuthGuard)
@@ -49,10 +46,14 @@ export class AttendanceController {
     async getTodayStatus(@Request() req: any) {
         const { sub: userId } = req.user;
 
-        const result = await firstValueFrom(
-            this.attendanceClient.send({ cmd: 'get_today_status' }, { userId })
-        );
-        return result;
+        try {
+            const response = await firstValueFrom(
+                this.httpService.get(`${ATTENDANCE_SERVICE}/attendance/status`, { params: { userId } })
+            );
+            return response.data;
+        } catch (error: any) {
+            throw new HttpException(error.response?.data?.message || 'Gagal mengambil status', error.response?.status || HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @UseGuards(JwtAuthGuard)
@@ -64,11 +65,14 @@ export class AttendanceController {
             throw new HttpException('Akses ditolak. Hanya untuk HR.', HttpStatus.FORBIDDEN);
         }
 
-        const records = await firstValueFrom(
-            this.attendanceClient.send({ cmd: 'get_attendance_records' }, { role })
-        );
-
-        return records;
+        try {
+            const response = await firstValueFrom(
+                this.httpService.get(`${ATTENDANCE_SERVICE}/attendance/records`, { params: { role } })
+            );
+            return response.data;
+        } catch (error: any) {
+            throw new HttpException(error.response?.data?.message || 'Gagal mengambil records', error.response?.status || HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @UseGuards(JwtAuthGuard)
@@ -82,18 +86,16 @@ export class AttendanceController {
             throw new HttpException('Filter tanggal wajib diisi.', HttpStatus.BAD_REQUEST);
         }
 
-        const result = await firstValueFrom(
-            this.attendanceClient.send({ cmd: 'get_all_records_by_date' }, {
-                startDate,
-                endDate,
-                nameQuery
-            })
-        );
-
-        if (result && result.error) {
-            throw new HttpException(result.error, HttpStatus.INTERNAL_SERVER_ERROR);
+        try {
+            const response = await firstValueFrom(
+                this.httpService.get(`${ATTENDANCE_SERVICE}/attendance/hr/records`, {
+                    params: { startDate, endDate, nameQuery }
+                })
+            );
+            return response.data;
+        } catch (error: any) {
+            throw new HttpException(error.response?.data?.message || 'Gagal mengambil records', error.response?.status || HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return result;
     }
 
     @UseGuards(JwtAuthGuard)
@@ -101,14 +103,13 @@ export class AttendanceController {
     async getMonthlyRecords(@Request() req: any) {
         const { sub: userId } = req.user;
 
-        const result = await firstValueFrom(
-            this.attendanceClient.send({ cmd: 'get_monthly_records' }, { userId })
-        );
-
-        if (result && result.error) {
-            throw new HttpException(result.error, HttpStatus.INTERNAL_SERVER_ERROR);
+        try {
+            const response = await firstValueFrom(
+                this.httpService.get(`${ATTENDANCE_SERVICE}/attendance/records/monthly`, { params: { userId } })
+            );
+            return response.data;
+        } catch (error: any) {
+            throw new HttpException(error.response?.data?.message || 'Gagal mengambil records bulanan', error.response?.status || HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
-        return result;
     }
 }

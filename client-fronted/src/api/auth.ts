@@ -21,13 +21,11 @@ export const updateProfile = async (data: any, token: string) => {
     return response.data;
 };
 
-// Instance Axios untuk request terautentikasi (optional, tapi disarankan)
 export const api = axios.create({
     baseURL: 'http://localhost:4000',
     headers: { 'Content-Type': 'application/json' },
 });
 
-// Interceptor untuk menyuntikkan token secara otomatis
 api.interceptors.request.use(config => {
     const token = localStorage.getItem('token');
     if (token) {

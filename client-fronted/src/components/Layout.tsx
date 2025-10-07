@@ -27,8 +27,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     const navItems = user.role === 'HR'
         ? [
             { name: 'Dashboard', path: '/dashboard' },
-            { name: 'Lihat Record Karyawan', path: '/hr/employees' },
             { name: 'Ubah Profil', path: '/profile' },
+            { name: 'Lihat Record Karyawan', path: '/hr/record-employees' },
+            { name: 'Tambah Karyawan', path: '/hr/register-employees' },
         ]
         : [
             { name: 'Dashboard', path: '/dashboard' },

@@ -2,7 +2,7 @@ import { createContext, useState, useContext, type ReactNode, useEffect } from '
 
 interface AuthContextType {
     token: string | null;
-    user: { id: string; email: string; name: string, role: 'EMPLOYEE' | 'HR' } | null;
+    user: { id: string; email: string; name: string, phone: number, role: 'EMPLOYEE' | 'HR' } | null;
     login: (token: string, userData: any) => void;
     logout: () => void;
     isLoading: boolean
