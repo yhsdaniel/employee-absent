@@ -11,7 +11,7 @@ export class AttendanceService {
         @InjectModel(Attendance.name) private attendanceModel: Model<AttendanceDocument>,
     ) { }
 
-    async recordAttendance(userId: string, type: 'IN' | 'OUT'): Promise<AttendanceDocument | { error: string }> {
+    async recordAttendance(userId: string, name: string, type: 'IN' | 'OUT'): Promise<AttendanceDocument | { error: string }> {
         try {
             const objectIdUserId = new Types.ObjectId(userId)
             const today = new Date();
@@ -20,6 +20,7 @@ export class AttendanceService {
             const lastRecord = await this.attendanceModel
                 .findOne({
                     userId: objectIdUserId,
+                    name,
                     timestamp: { $gte: today }
                 })
                 .sort({ timestamp: -1 })
@@ -40,6 +41,7 @@ export class AttendanceService {
 
             const newRecord = new this.attendanceModel({
                 userId: objectIdUserId,
+                name,
                 type,
                 timestamp: new Date()
             });
@@ -62,7 +64,7 @@ export class AttendanceService {
                 })
                 .sort({ timestamp: -1 })
                 .exec();
-            
+
             let status: 'IN' | 'OUT' | null = null;
             if (lastRecord) {
                 status = lastRecord.type as 'IN' | 'OUT';
@@ -73,6 +75,63 @@ export class AttendanceService {
             console.error('Error getting today status:', error);
             // Kembalikan status null jika terjadi error database
             return { status: null };
+        }
+    }
+
+    async getMonthlyRecords(userId: string): Promise<AttendanceDocument[] | any> {
+        try {
+            const objectIdUserId = new Types.ObjectId(userId);
+
+            // Hitung tanggal 1 bulan ini (Start Date)
+            const now = new Date();
+            const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+            // Catatan: Tanggal akhir secara implisit adalah 'sekarang' karena query $gte startOfMonth
+
+            const records = await this.attendanceModel
+                .find({
+                    userId: objectIdUserId,
+                    timestamp: { $gte: startOfMonth }
+                })
+                .sort({ timestamp: -1 }) // Urutkan dari yang terbaru
+                .exec();
+
+            return records;
+
+        } catch (error) {
+            console.error('Error fetching monthly records:', error);
+            return { error: 'Gagal mengambil riwayat absensi.' };
+        }
+    }
+
+    async getAllRecordsByDate(startDate: string, endDate: string, name: string): Promise<any[] | { error: string }> {
+        try {
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+
+            end.setHours(23, 59, 59, 999);
+
+            if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+                return { error: 'Format tanggal tidak valid.' };
+            }
+
+            const records = await this.attendanceModel
+                .find({
+                    timestamp: {
+                        $gte: start,
+                        $lte: end
+                    },
+                    name
+                })
+                .sort({ timestamp: -1 })
+                .exec();
+
+            console.log(name)
+            
+            return records;
+        } catch (error) {
+            console.error('Error fetching all records by date:', error);
+            return { error: 'Gagal mengambil data riwayat absensi.' };
         }
     }
 

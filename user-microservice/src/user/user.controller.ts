@@ -39,7 +39,7 @@ export class UserController {
     }
 
     @MessagePattern({ cmd: 'update_profile' })
-    async updateProfile(data: { userId: string, name: string, email: string }) {
+    async updateProfile(data: { userId: string, name: string, email: string, password: string }) {
         return this.userService.updateProfile(data.userId, data);
     }
 }

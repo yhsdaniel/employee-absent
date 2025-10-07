@@ -26,8 +26,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
     const navItems = user.role === 'HR'
         ? [
-            { name: 'Dashboard HR', path: '/hr/records' },
-            { name: 'Lihat Karyawan', path: '/hr/employees' }, // Route tambahan untuk HR
+            { name: 'Dashboard', path: '/dashboard' },
+            { name: 'Lihat Record Karyawan', path: '/hr/employees' },
+            { name: 'Ubah Profil', path: '/profile' },
         ]
         : [
             { name: 'Dashboard', path: '/dashboard' },
@@ -78,7 +79,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                             </DropdownMenuLabel>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem asChild>
-                                {/* Link ke halaman profil yang sama untuk karyawan */}
                                 <Link to="/profile">Ubah Profil</Link>
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />

@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Inject, UseGuards, Request, Body, HttpException, HttpStatus } from '@nestjs/common';
+import { Controller, Post, Get, Inject, UseGuards, Request, Body, HttpException, HttpStatus, Query } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -10,10 +10,10 @@ export class AttendanceController {
     @UseGuards(JwtAuthGuard)
     @Post('checkin')
     async checkIn(@Request() req: any) {
-        const { sub: userId } = req.user;
+        const { sub: userId, name: name } = req.user;
 
         const result = await firstValueFrom(
-            this.attendanceClient.send({ cmd: 'check_in' }, { userId })
+            this.attendanceClient.send({ cmd: 'check_in' }, { userId, name })
         );
 
         if (result && result.error) {
@@ -29,10 +29,10 @@ export class AttendanceController {
     @UseGuards(JwtAuthGuard)
     @Post('checkout')
     async checkOut(@Request() req: any) {
-        const { sub: userId } = req.user;
+        const { sub: userId, name: name } = req.user;
 
         const result = await firstValueFrom(
-            this.attendanceClient.send({ cmd: 'check_out' }, { userId })
+            this.attendanceClient.send({ cmd: 'check_out' }, { userId, name })
         );
 
         if (result && result.error) {
@@ -69,5 +69,46 @@ export class AttendanceController {
         );
 
         return records;
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get('hr/records')
+    async getAllRecordsByDate(
+        @Query('startDate') startDate: string,
+        @Query('endDate') endDate: string,
+        @Query('name') nameQuery?: string,
+    ) {
+        if (!startDate || !endDate) {
+            throw new HttpException('Filter tanggal wajib diisi.', HttpStatus.BAD_REQUEST);
+        }
+
+        const result = await firstValueFrom(
+            this.attendanceClient.send({ cmd: 'get_all_records_by_date' }, {
+                startDate,
+                endDate,
+                nameQuery
+            })
+        );
+
+        if (result && result.error) {
+            throw new HttpException(result.error, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return result;
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get('records/monthly')
+    async getMonthlyRecords(@Request() req: any) {
+        const { sub: userId } = req.user;
+
+        const result = await firstValueFrom(
+            this.attendanceClient.send({ cmd: 'get_monthly_records' }, { userId })
+        );
+
+        if (result && result.error) {
+            throw new HttpException(result.error, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return result;
     }
 }

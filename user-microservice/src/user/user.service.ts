@@ -85,12 +85,22 @@ export class UserService {
         return this.jwtService.sign(payload);
     }
 
-    async updateProfile(userId: string, updateData: { name?: string, phone?: number }): Promise<UserDocument | null> {
-        return this.userModel.findByIdAndUpdate(
-            userId,
-            { $set: updateData },
-            { new: true }
-        ).exec();
+    async updateProfile(userId: string, updateData: { email?: string, name?: string, password?: string }): Promise<UserDocument | null> {
+        try {
+            const updateField: any = {}
+            if(updateData.password){
+                const hashedPassword = await bcrypt.hash(updateData.password, 10);
+                updateField.password = hashedPassword
+            }
+            return this.userModel.findByIdAndUpdate(
+                userId,
+                { $set: updateField },
+                { new: true }
+            ).exec();
+        } catch (error) {
+            console.log(error)
+            throw new Error('Error update profile')
+        }
     }
 
     async findAllEmployees(): Promise<UserDocument[]> {

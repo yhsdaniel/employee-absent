@@ -18,6 +18,11 @@ export class Attendance {
     type: string;
 
     @Prop({
+        required: true
+    })
+    name: string
+
+    @Prop({
         required: true,
         default: Date.now,
     })

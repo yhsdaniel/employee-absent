@@ -29,12 +29,7 @@ export default function LoginPage() {
             const decodeToken = jwtDecode(accessToken)
 
             login(accessToken, decodeToken);
-
-            if (decodeToken?.role === 'HR') {
-                navigate('/hr/records');
-            } else {
-                navigate('/dashboard');
-            }
+            navigate('/dashboard');
 
         } catch (err: any) {
             setError(err.response?.data?.message || 'Login gagal. Coba lagi.');
@@ -66,12 +61,12 @@ export default function LoginPage() {
                         {error && <p className="text-red-500 text-sm">{error}</p>}
                     </CardContent>
                     <CardFooter className="flex flex-col">
-                        <Button type="submit" className="w-full">
+                        <Button type="submit" className="w-full my-6">
                             Login
                         </Button>
-                        <p className="mt-4 text-sm text-center text-gray-500">
+                        {/* <p className="mt-4 text-sm text-center text-gray-500">
                             Belum punya akun? <a href="/register" className="text-blue-600 hover:underline">Daftar</a>
-                        </p>
+                        </p> */}
                     </CardFooter>
                 </form>
             </Card>
