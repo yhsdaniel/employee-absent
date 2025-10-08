@@ -1,28 +1,34 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:4000/auth';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+const AUTH_URL = `${API_BASE_URL}/auth`;
 
 export const registerEmployee = async (data: any) => {
-    const response = await axios.post(`${API_URL}/register`, data);
+    const response = await axios.post(`${AUTH_URL}/register`, data, {
+        withCredentials: true,
+    });
     return response.data;
 };
 
 export const loginUser = async (data: any) => {
-    const response = await axios.post(`${API_URL}/login`, data);
+    const response = await axios.post(`${AUTH_URL}/login`, data, {
+        withCredentials: true,
+    });
     return response.data;
 };
 
 export const updateProfile = async (data: any, token: string) => {
-    const response = await axios.post(`${API_URL}/profile`, data, {
+    const response = await axios.post(`${AUTH_URL}/profile`, data, {
         headers: {
             Authorization: `Bearer ${token}`,
         },
+        withCredentials: true,
     });
     return response.data;
 };
 
 export const api = axios.create({
-    baseURL: 'http://localhost:4000',
+    baseURL: API_BASE_URL,
     headers: { 'Content-Type': 'application/json' },
 });
 

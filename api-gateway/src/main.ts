@@ -15,7 +15,7 @@ async function bootstrap() {
   app.enableCors({
     origin: allowedOrigins,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-    // credentials: true,
+    credentials: true,
     // allowedHeaders: 'Content-Type, Accept, Authorization, X-Requested-With',
   })
   const expressApp = app.getHttpAdapter().getInstance();
