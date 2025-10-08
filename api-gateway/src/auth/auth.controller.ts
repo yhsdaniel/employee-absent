@@ -1,5 +1,4 @@
-import { Controller, Post, Body, Inject, UseGuards, Get, Request, HttpException, HttpStatus } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
+import { Controller, Post, Body, UseGuards, Request, HttpException, HttpStatus } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { HttpService } from '@nestjs/axios';
@@ -8,7 +7,6 @@ const USER_SERVICE = process.env.USER_SERVICE_URL || 'http://localhost:3001'
 
 @Controller('auth')
 export class AuthController {
-    // constructor(@Inject('USER_SERVICE') private readonly userClient: ClientProxy) { }
     constructor(private readonly httpService: HttpService) { }
 
     @Post('register')

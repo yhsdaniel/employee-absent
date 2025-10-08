@@ -7,16 +7,13 @@ import { User, UserSchema } from '../schemas/user.schema';
 
 @Module({
     imports: [
-        MongooseModule.forRoot('mongodb+srv://gaaradanil:gaaradanil09@absence.qrs5aoa.mongodb.net/?retryWrites=true&w=majority&appName=absence'),
         MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
-
         JwtModule.register({
             secret: 'SUPER_SECRET_KEY_FOR_USER_SERVICE',
             signOptions: { expiresIn: '24h' },
         }),
     ],
     controllers: [UserController],
-    providers: [UserService],
-    exports: [UserService],
+    providers: [UserService]
 })
 export class UserModule { }

@@ -73,10 +73,9 @@ export default function EmployeeRecordPage() {
 
     return (
         <Layout>
-            <div className="p-8 max-w-6xl mx-auto">
-                <h2 className="text-3xl font-bold mb-6">Riwayat Absensi Karyawan (HR)</h2>
+            <div className="p-2 max-w-6xl mx-auto">
+                <h2 className="text-xl font-bold mb-6">Riwayat Absensi Karyawan (HR)</h2>
 
-                {/* Filter Data */}
                 <Card className="mb-6">
                     <CardHeader><CardTitle className="text-lg">Filter Data</CardTitle></CardHeader>
                     <CardContent className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4 items-end">

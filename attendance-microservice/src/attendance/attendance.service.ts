@@ -59,7 +59,7 @@ export class AttendanceService {
 
             const lastRecord = await this.attendanceModel
                 .findOne({
-                    userId: new Types.ObjectId(userId), // Konversi ke ObjectId
+                    userId: new Types.ObjectId(userId),
                     timestamp: { $gte: today }
                 })
                 .sort({ timestamp: -1 })
@@ -73,7 +73,6 @@ export class AttendanceService {
 
         } catch (error) {
             console.error('Error getting today status:', error);
-            // Kembalikan status null jika terjadi error database
             return { status: null };
         }
     }
@@ -82,12 +81,8 @@ export class AttendanceService {
         try {
             const objectIdUserId = new Types.ObjectId(userId);
 
-            // Hitung tanggal 1 bulan ini (Start Date)
             const now = new Date();
             const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-
-            // Catatan: Tanggal akhir secara implisit adalah 'sekarang' karena query $gte startOfMonth
-
             const records = await this.attendanceModel
                 .find({
                     userId: objectIdUserId,

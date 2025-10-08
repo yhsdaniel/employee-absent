@@ -1,20 +1,17 @@
 import { useState, useEffect } from 'react';
-// import { useAuth } from '@/context/AuthContext';
 import Layout from '@/components/Layout';
 import { Button } from '@/components/ui/button';
 import { api } from '@/api/auth';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
-// Interface untuk data record absensi (sesuaikan jika ada properti lain)
 interface AttendanceRecord {
     _id: string;
     type: 'IN' | 'OUT';
-    timestamp: string; // Akan dikonversi dari string ISO
+    timestamp: string;
 }
 
 export default function DashboardPage() {
-    // const { user } = useAuth();
     const [status, setStatus] = useState<'IN' | 'OUT' | null>(null);
     const [message, setMessage] = useState('');
     const [isLoading, setIsLoading] = useState(true);
@@ -73,8 +70,8 @@ export default function DashboardPage() {
 
     return (
         <Layout>
-            <div className="p-8">
-                <h1 className="text-3xl font-bold mb-6">Dashboard Karyawan</h1>
+            <div className="p-2">
+                <h2 className="text-xl font-bold mb-6">Dashboard Karyawan</h2>
 
                 <Card className="w-full max-w-lg mx-auto mb-8">
                     <CardHeader>
@@ -105,7 +102,6 @@ export default function DashboardPage() {
                     </CardContent>
                 </Card>
 
-                {/* Bagian Riwayat Absensi */}
                 <Card className="w-full">
                     <CardHeader>
                         <CardTitle className="text-xl">Riwayat Absensi Bulan Ini</CardTitle>

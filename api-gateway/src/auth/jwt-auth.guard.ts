@@ -1,11 +1,9 @@
 import { HttpService } from '@nestjs/axios';
-import { CanActivate, ExecutionContext, Injectable, Inject, UnauthorizedException } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
+import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
-  // constructor(@Inject('USER_SERVICE') private readonly userClient: ClientProxy) { }
   constructor(private readonly httpService: HttpService) { }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {

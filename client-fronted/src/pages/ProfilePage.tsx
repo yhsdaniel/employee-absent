@@ -75,8 +75,8 @@ export default function ProfilePage() {
 
     return (
         <Layout>
-            <div className="p-8 max-w-2xl mx-auto">
-                <h1 className="text-3xl font-bold mb-6">Ubah Profil Saya</h1>
+            <div className="p-2 max-w-2xl mx-auto">
+                <h2 className="text-xl font-bold mb-6">Ubah Profil Saya</h2>
 
                 <Card className="shadow-lg">
                     <CardHeader>

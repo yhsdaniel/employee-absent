@@ -1,5 +1,4 @@
 import { Body, Controller, HttpException, HttpStatus, Param, Patch, Post } from '@nestjs/common';
-import { MessagePattern } from '@nestjs/microservices';
 import { UserService } from './user.service';
 
 @Controller('auth')

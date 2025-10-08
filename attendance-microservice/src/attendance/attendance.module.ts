@@ -6,7 +6,6 @@ import { Attendance, AttendanceSchema } from '../schemas/attendance.schema';
 
 @Module({
     imports: [
-        MongooseModule.forRoot('mongodb+srv://gaaradanil:gaaradanil09@absence.qrs5aoa.mongodb.net/?retryWrites=true&w=majority&appName=absence'), // Ganti URL ini
         MongooseModule.forFeature([{ name: Attendance.name, schema: AttendanceSchema }]),
     ],
     controllers: [AttendanceController],

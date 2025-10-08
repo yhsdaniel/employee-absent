@@ -1,5 +1,4 @@
-import { Controller, Post, Get, Inject, UseGuards, Request, Body, HttpException, HttpStatus, Query } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
+import { Controller, Post, Get, UseGuards, Request, HttpException, HttpStatus, Query } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { HttpService } from '@nestjs/axios';
@@ -8,7 +7,6 @@ const ATTENDANCE_SERVICE = process.env.ATTENDANCE_SERVICE_URL || 'http://localho
 
 @Controller('attendance')
 export class AttendanceController {
-    // constructor(@Inject('ATTENDANCE_SERVICE') private readonly attendanceClient: ClientProxy) { }
     constructor(private readonly httpService: HttpService) { }
 
     @UseGuards(JwtAuthGuard)

@@ -19,12 +19,7 @@ type FormDataTypes = {
 }
 
 export default function ProfilePage() {
-    const { user, login } = useAuth(); // Ambil user saat ini dan fungsi login untuk update state
-
-    // Asumsi user memiliki properti: email, name (jika ada di payload login)
-    // const [name, setName] = useState(user?.name || '');
-    // const [email, setEmail] = useState(user?.email || '');
-    // const [newPassword, setNewPassword] = useState('');
+    const { user, login } = useAuth();
     const [formData, setFormData] = useState<FormDataTypes>({
         name: '',
         email: '',
@@ -86,8 +81,8 @@ export default function ProfilePage() {
 
     return (
         <Layout>
-            <div className="p-8 max-w-2xl mx-auto">
-                <h2 className="text-3xl font-bold mb-6">Register Karyawan Baru</h2>
+            <div className="p-2 max-w-2xl mx-auto">
+                <h2 className="text-xl font-bold mb-6">Register Karyawan Baru</h2>
 
                 <Card className="shadow-lg">
                     <CardHeader>
@@ -172,13 +167,6 @@ export default function ProfilePage() {
                                         </SelectGroup>
                                     </SelectContent>
                                 </Select>
-                                {/* <Input
-                                    id="password"
-                                    type="password"
-                                    placeholder="Kosongkan jika tidak ingin mengubah password"
-                                    value={newPassword}
-                                    onChange={(e) => setNewPassword(e.target.value)}
-                                /> */}
                             </div>
 
                         </CardContent>
