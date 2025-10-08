@@ -15,13 +15,12 @@ async function bootstrap() {
   app.enableCors({
     origin: allowedOrigins,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-    credentials: true,
-    allowedHeaders: 'Content-Type, Accept, Authorization, X-Requested-With',
+    // credentials: true,
+    // allowedHeaders: 'Content-Type, Accept, Authorization, X-Requested-With',
   })
   const expressApp = app.getHttpAdapter().getInstance();
   expressApp.set('trust proxy', 1);
-  await app.init();
-  // await app.listen(process.env.PORT ?? 4000);
-  // console.log('API gateway starting on http://localhost:4000')
+  await app.listen(process.env.PORT ?? 4000);
+  console.log('API gateway starting on http://localhost:4000')
 }
 bootstrap();
