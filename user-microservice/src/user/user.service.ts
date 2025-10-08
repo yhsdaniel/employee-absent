@@ -86,13 +86,15 @@ export class UserService {
         return this.jwtService.sign(payload);
     }
 
-    async updateProfile(userId: string, updateData: { email?: string, name?: string, password?: string, phone?: number }): Promise<UserDocument | null> {
+    async updateProfile(userId: string, updateData: { password?: string, phone?: number }): Promise<UserDocument | null> {
         try {
             const updateField: any = {}
-            if(updateData.password){
+            if (updateData.password) {
                 const hashedPassword = await bcrypt.hash(updateData.password, 10);
                 updateField.password = hashedPassword
-                updateField.phone
+            }
+            if (updateData.phone !== undefined && updateData.phone !== null) {
+                updateField.phone = updateData.phone;
             }
             return this.userModel.findByIdAndUpdate(
                 userId,

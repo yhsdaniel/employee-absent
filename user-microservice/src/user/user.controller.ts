@@ -16,7 +16,6 @@ export class UserController {
                 body.position,
                 body.role,
             );
-            console.log(user)
             return { message: 'Registrasi berhasil!', user };
         } catch (error: any) {
             if (error.code === 11000) {

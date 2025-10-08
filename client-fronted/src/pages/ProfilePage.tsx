@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import Layout from '@/components/Layout';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { updateProfile } from '@/api/auth';
+import toast from 'react-hot-toast';
 
 export default function ProfilePage() {
     const { user, login } = useAuth();
@@ -13,8 +14,8 @@ export default function ProfilePage() {
     const [formData, setFormData] = useState({
         name: user?.name || '',
         email: user?.email || '',
-        newPassword: '',
-        newphone: user?.phone || '',
+        password: '',
+        phone: user?.phone || '',
     })
     const [message, setMessage] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -25,10 +26,19 @@ export default function ProfilePage() {
 
         setFormData({
             ...formData,
-            [name]: name === 'newphone' ? Number(value) : value,
+            [name]: name === 'phone' ? Number(value) : value,
 
         });
     };
+
+    useEffect(() => {
+        setFormData(prev => ({
+            ...prev,
+            name: user?.name || '',
+            email: user?.email || '',
+            phone: user?.phone || 0,
+        }));
+    }, [user]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -42,18 +52,18 @@ export default function ProfilePage() {
         }
 
         const updateData: any = {};
-        if (formData.newPassword) updateData.password = formData.newPassword;
-        if (formData.newphone) updateData.phone = formData.newphone;
+        if (formData.password) updateData.password = formData.password;
+        if (formData.phone && formData.phone !== user?.phone) updateData.phone = formData.phone;
 
         if (Object.keys(updateData).length === 0) {
-            setMessage('Tidak ada perubahan.');
+            toast.error('Tidak ada perubahan.')
             setIsSubmitting(false);
             return;
         }
 
         try {
             const response = await updateProfile(updateData, token);
-            setMessage('Profil berhasil diperbarui! 🎉');
+            toast.success('Profil berhasil diperbarui! 🎉')
 
             if (response.user) {
                 login(token, { ...user, ...response.user });
@@ -61,13 +71,13 @@ export default function ProfilePage() {
             setFormData({
                 name: '',
                 email: '',
-                newPassword: '',
-                newphone: ''
+                password: '',
+                phone: ''
             });
 
         } catch (error: any) {
             console.error('Update Profile Error:', error);
-            setMessage(error.response?.data?.message || 'Gagal memperbarui profil. Coba lagi.');
+            toast.error(error.response?.data?.message || 'Gagal memperbarui profil. Coba lagi.')
         } finally {
             setIsSubmitting(false);
         }
@@ -121,7 +131,7 @@ export default function ProfilePage() {
                                     type="number"
                                     name='phone'
                                     placeholder="Masukan nomor kontak baru"
-                                    value={formData.newphone}
+                                    value={formData.phone}
                                     onChange={handleChange}
                                 />
                             </div>
@@ -133,7 +143,7 @@ export default function ProfilePage() {
                                     type="password"
                                     name='password'
                                     placeholder="Kosongkan jika tidak ingin mengubah password"
-                                    value={formData.newPassword}
+                                    value={formData.password}
                                     onChange={handleChange}
                                 />
                             </div>

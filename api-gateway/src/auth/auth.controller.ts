@@ -47,7 +47,7 @@ export class AuthController {
     @UseGuards(JwtAuthGuard)
     @Post('profile')
     async updateProfile(@Request() req: any, @Body() body: any) {
-        const {userId} = req.user.sub;
+        const userId = req.user.sub;
 
         try {
             const response = await firstValueFrom(
