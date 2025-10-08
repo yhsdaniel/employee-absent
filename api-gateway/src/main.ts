@@ -1,22 +1,23 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import serverlessExpress from '@vendia/serverless-express';
-
-let server: any;
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.enableCors({
-    origin: ['http://localhost:5173', 'https://employee-absent.vercel.app'],
-    credentials: true,
-  });
-  await app.init();
-  const expressApp = app.getHttpAdapter().getInstance();
-  return serverlessExpress({ app: expressApp });
-}
+  const defaultOrigins = [
+    'http://localhost:5173',
+    'https://employee-absent.vercel.app'
+  ];
 
-export const handler = async (event: any, context: any) => {
-  server = server ?? (await bootstrap());
-  return server(event, context);
-};
+  const allowedOrigins = process.env.CORS_ORIGIN
+    ? process.env.CORS_ORIGIN.split(',')
+    : defaultOrigins;
+
+  app.enableCors({
+    origin: allowedOrigins,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    credentials: true,
+  })
+  await app.listen(process.env.PORT ?? 4000);
+  console.log('API gateway starting on http://localhost:4000')
+}
 bootstrap();
