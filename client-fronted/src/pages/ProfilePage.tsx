@@ -26,7 +26,7 @@ export default function ProfilePage() {
 
         setFormData({
             ...formData,
-            [name]: name === 'phone' ? Number(value) : value,
+            [name]: value
 
         });
     };
@@ -36,7 +36,7 @@ export default function ProfilePage() {
             ...prev,
             name: user?.name || '',
             email: user?.email || '',
-            phone: user?.phone || 0,
+            phone: user?.phone || '',
         }));
     }, [user]);
 

@@ -13,7 +13,7 @@ type FormDataTypes = {
     name: string,
     email: string,
     password: string,
-    phone: number,
+    phone: number | string,
     position: string,
     role: 'EMPLOYEE' | 'HR'
 }
@@ -24,7 +24,7 @@ export default function ProfilePage() {
         name: '',
         email: '',
         password: '',
-        phone: 0,
+        phone: '',
         position: '',
         role: 'EMPLOYEE'
     })
@@ -35,7 +35,7 @@ export default function ProfilePage() {
         const { name, value } = e.target;
         setFormData({
             ...formData,
-            [name]: name === 'phone' ? Number(value) : value,
+            [name]: value
         });
     };
 
@@ -67,7 +67,7 @@ export default function ProfilePage() {
                 name: '',
                 email: '',
                 password: '',
-                phone: 0,
+                phone: '',
                 position: '',
                 role: 'EMPLOYEE'
             });

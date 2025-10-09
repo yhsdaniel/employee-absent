@@ -1,7 +1,7 @@
-import React, { type ReactNode } from 'react';
+import React, { useEffect, type ReactNode } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
-import { Menu, LogOut, LayoutDashboard, UserCircle, ScrollText, UserPlus, Briefcase, Settings } from 'lucide-react'; 
+import { Menu, LogOut, LayoutDashboard, UserCircle, ScrollText, UserPlus, Briefcase, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
     DropdownMenu,
@@ -31,6 +31,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
+
+    useEffect(() => {
+        document.body.style.pointerEvents = 'auto';
+    }, [location]);
 
     if (!user) {
         navigate('/');
@@ -71,8 +75,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                                 variant={active ? 'default' : 'ghost'}
                                 className={`
                                     w-full justify-start text-base h-11 transition-colors rounded-xl
-                                    ${active 
-                                        ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-md' 
+                                    ${active
+                                        ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-md'
                                         : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600'
                                     }
                                 `}
@@ -109,8 +113,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                             </Link>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem 
-                            onClick={handleLogout} 
+                        <DropdownMenuItem
+                            onClick={handleLogout}
                             className="text-red-600 cursor-pointer flex items-center focus:text-red-600 focus:bg-red-50"
                         >
                             <LogOut className="mr-2 h-4 w-4" />
@@ -124,7 +128,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
     return (
         <div className="flex h-screen bg-gray-50 font-sans">
-            
             <aside className="hidden lg:flex w-64 bg-white shadow-2xl flex-col h-full">
                 <SidebarContent />
             </aside>
@@ -132,9 +135,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             <div className="lg:hidden">
                 <Sheet>
                     <SheetTrigger asChild>
-                        <Button 
-                            variant="ghost" 
-                            size="icon" 
+                        <Button
+                            variant="ghost"
+                            size="icon"
                             className="fixed top-4 left-4 z-50 bg-white shadow-xl rounded-full h-12 w-12 hover:bg-gray-100"
                         >
                             <Menu className="h-6 w-6 text-blue-600" />
@@ -145,9 +148,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                     </SheetContent>
                 </Sheet>
             </div>
-            
+
             <main className="flex-1 overflow-y-auto w-full p-4 lg:p-8">
-                <div className="lg:hidden h-16"></div> 
+                <div className="lg:hidden h-16"></div>
                 {children}
             </main>
         </div>
