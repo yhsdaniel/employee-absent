@@ -15,3 +15,5 @@ Dockerfile
 
 # Ignore the .dockerignore file itself
 .dockerignore
+
+docker-compose.yml
