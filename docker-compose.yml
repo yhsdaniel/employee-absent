@@ -34,7 +34,7 @@ services:
 
   client-frontend:
     build: 
-      context: ./client-frontend
+      context: ./client-fronted
       dockerfile: Dockerfile.prod
     container_name: client-frontend
     ports:
