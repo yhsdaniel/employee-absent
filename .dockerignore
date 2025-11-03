@@ -1,19 +1,24 @@
-# Ignore the node_modules directory
+# Ignore dependencies
 node_modules/
 
-# Ignore all log files
+# Ignore logs
 *.log
 
-# Ignore the .git directory
+# Ignore git files
 .git/
+.gitignore
 
 # Ignore temporary files
 tmp/
+*.tmp
 
-# Ignore the Dockerfile itself from being copied into the image
+# Ignore Docker config files
 Dockerfile
-
-# Ignore the .dockerignore file itself
 .dockerignore
-
 docker-compose.yml
+
+# Ignore environment and local config
+.env
+.env.local
+.vscode/
+.idea/
