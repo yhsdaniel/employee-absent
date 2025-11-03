@@ -4,7 +4,7 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const defaultOrigins = [
-    'http://localhost:5173',
+    'http://localhost:8080',
     'https://employee-absent.vercel.app'
   ];
 

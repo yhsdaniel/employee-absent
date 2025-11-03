@@ -1,0 +1,17 @@
+# Ignore the node_modules directory
+node_modules/
+
+# Ignore all log files
+*.log
+
+# Ignore the .git directory
+.git/
+
+# Ignore temporary files
+tmp/
+
+# Ignore the Dockerfile itself from being copied into the image
+Dockerfile
+
+# Ignore the .dockerignore file itself
+.dockerignore

@@ -1,4 +1,3 @@
-version: '3.9'
 services:
   api-gateway:
     build: ./api-gateway
@@ -32,3 +31,16 @@ services:
       - PORT=3002
       - MONGO_URI=mongodb+srv://gaaradanil:gaaradanil09@absence.qrs5aoa.mongodb.net/?retryWrites=true&w=majority&appName=absence
     command: ["node", "dist/main.js"]
+
+  client-frontend:
+    build: 
+      context: ./client-frontend
+      dockerfile: Dockerfile.prod
+    container_name: client-frontend
+    ports:
+      - "8080:80"
+    environment:
+      - PORT=4000
+      - VITE_API_URL=http://localhost:4000
+      - USER_SERVICE_URL=http://localhost:3001
+      - ATTENDANCE_SERVICE_URL=http://localhost:3002
