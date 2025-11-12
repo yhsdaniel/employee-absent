@@ -19,7 +19,7 @@ async function bootstrap() {
     // allowedHeaders: 'Content-Type, Accept, Authorization, X-Requested-With',
   })
   const expressApp = app.getHttpAdapter().getInstance();
-  expressApp.set('trust proxy', 1);
+  expressApp.set('trust proxy', true);
   await app.listen(process.env.PORT ?? 4000);
   console.log('API gateway starting on http://localhost:4000')
 }

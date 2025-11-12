@@ -1,5 +1,6 @@
-import { Body, Controller, HttpException, HttpStatus, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, HttpException, HttpStatus, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
+import { OfficeNetworkGuard } from './user.guard';
 
 @Controller('auth')
 export class UserController {

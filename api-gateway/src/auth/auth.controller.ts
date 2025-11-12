@@ -2,6 +2,7 @@ import { Controller, Post, Body, UseGuards, Request, HttpException, HttpStatus }
 import { firstValueFrom } from 'rxjs';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { HttpService } from '@nestjs/axios';
+import { OfficeNetworkGuard } from './user.guard';
 
 const USER_SERVICE = process.env.USER_SERVICE_URL || 'http://localhost:3001'
 
@@ -29,6 +30,7 @@ export class AuthController {
         }
     }
 
+    @UseGuards(OfficeNetworkGuard)
     @Post('login')
     async login(@Body() body: any) {
         try {
