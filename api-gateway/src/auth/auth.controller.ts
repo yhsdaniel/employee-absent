@@ -30,7 +30,6 @@ export class AuthController {
         }
     }
 
-    @UseGuards(OfficeNetworkGuard)
     @Post('login')
     async login(@Body() body: any) {
         try {
